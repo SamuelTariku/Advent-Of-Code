@@ -1,14 +1,25 @@
 
 
-def underline(text):
+def highlightRed(text):
     return "\033[31m" + text + "\033[0m"
 
 
-def getWithHighlight(line, indexJoltList):
+def highlightBlue(text):
+    return "\033[44m" + text + "\033[0m"
+
+
+def getWithhighlightRed(line, indexJoltList, maxj, start, end):
     newLine = ""
     for k in range(0, len(line.rstrip('\n'))):
+        if (k == start):
+            newLine += "["
+        if (k == end + 1):
+            newLine += "]"
+        if (k == maxj):
+            newLine += highlightBlue(line[k])
+            continue
         if (k in indexJoltList):
-            newLine += underline(line[k])
+            newLine += highlightRed(line[k])
             continue
         newLine += line[k]
     return newLine
@@ -19,52 +30,66 @@ def checkOrderedMax(line, lineInt):
     indexJoltList = []
     start = 0
     end = len(lineInt)
-    print("lineInt", lineInt)
+    rev = False
     while True:
 
         if len(indexJoltList) == 12:
             break
-        #
-        # if start >= end:
-        #     remaining = []
-        #     for i in reversed(range(0, len(lineInt))):
-        #         if i not in indexJoltList:
-        #             indexJoltList.append(i)
-        #             remaining.append(i)
-        #
-        #         if len(indexJoltList) == 12:
-        #             break
-        #     print(f"remaining: {getWithHighlight(line, remaining)}")
-        #     break
-        #
+
         if start >= end:
             remaining = []
-            minIndex = min(indexJoltList)
+            # minIndex = min(indexJoltList)
             for i in reversed(lineIndex):
                 if i in indexJoltList:
-                    lineIndex.pop(i)
+                    # print(f"I is {i}, listIndex is {lineIndex}")
+                    lineIndex.pop(lineIndex.index(i))
                 else:
                     remaining.append(i)
 
-            start = 0
+            minIndex = 0
+            # break into multiple sections
+            for j in reversed(indexJoltList):
+                found = False
+                for i in lineIndex:
+                    if i > j:
+                        # translate to lineIndex
+                        minIndex = lineIndex.index(i)
+                        found = True
+                        # print(f"found lineIndex:{i} indexJoltList:{
+                        #       j}, minIndex:{minIndex}")
+                        break
+                if found:
+                    break
+
+            start = minIndex
             end = len(lineIndex)
+            # print(f"section: {lineIndex[start:end]}")
 
-            print(f"remaining: {getWithHighlight(
-                line, remaining)}, new lineIndex: {lineIndex}")
+            # print(f"remaining: {getWithhighlightRed(
+            # line, remaining)}, new lineIndex: {lineIndex}")
 
-        maxj = start
-        for j in range(start, end):
+        # Chcek list for max values
+        if rev:
+            maxj = end - 1
+            iter = reversed(range(start, end))
+        else:
+            maxj = start
+            iter = range(start, end)
+
+        for j in iter:
             if lineInt[lineIndex[j]] > lineInt[lineIndex[maxj]]:
                 maxj = j
+
         if maxj == (end - 1):
-            print(f"-> s:{start} e:{end}, maxj:{maxj} val:{lineInt[lineIndex[maxj]]} lineIndex:{
-                  lineIndex} jolt:{getWithHighlight(line, indexJoltList)}")
+            print(f"-> s:{start} e:{end}, maxval:{
+                lineInt[lineIndex[maxj]]} jolt:{
+                getWithhighlightRed(line, indexJoltList, maxj, start, end)}")
             indexJoltList.append(lineIndex[maxj])
             end = maxj
             continue
-
-        print(f"<- s:{start} e:{end}, maxj:{maxj} val:{lineInt[lineIndex[maxj]]} lineIndex:{
-              lineIndex} jolt:{getWithHighlight(line, indexJoltList)}")
+        print(f"<- s:{start} e:{end}, maxval:{
+            lineInt[lineIndex[maxj]]} jolt:{
+            getWithhighlightRed(line, indexJoltList, maxj, start, end)}")
         indexJoltList.append(lineIndex[maxj])
         start = maxj + 1
 
@@ -72,76 +97,27 @@ def checkOrderedMax(line, lineInt):
 
 
 def main():
-    with open("./part1_test.txt", "r", encoding="utf8") as file:
+    with open("./part1_input.txt", "r", encoding="utf8") as file:
         joltages = []
         for line in file:
             lineInt = [int(i) for i in list(line.rstrip("\n"))]
 
-            lineIndex = [i for i in range(0, len(lineInt))]
-            indexJoltList = []
-            start = 0
-            end = len(lineInt)
-            print("lineInt", lineInt)
-            while True:
-
-                if len(indexJoltList) == 12:
-                    break
-                #
-                # if start >= end:
-                #     remaining = []
-                #     for i in reversed(range(0, len(lineInt))):
-                #         if i not in indexJoltList:
-                #             indexJoltList.append(i)
-                #             remaining.append(i)
-                #
-                #         if len(indexJoltList) == 12:
-                #             break
-                #     print(f"remaining: {getWithHighlight(line, remaining)}")
-                #     break
-                #
-                if start >= end:
-                    remaining = []
-                    minIndex = min(indexJoltList)
-                    for i in reversed(lineIndex):
-                        if i in indexJoltList:
-                            lineIndex.pop(i)
-                        else:
-                            remaining.append(i)
-
-                    start = 0
-                    end = len(lineIndex)
-
-                    print(f"remaining: {getWithHighlight(
-                        line, remaining)}, new lineIndex: {lineIndex}")
-
-                maxj = start
-                for j in range(start, end):
-                    if lineInt[lineIndex[j]] > lineInt[lineIndex[maxj]]:
-                        maxj = j
-                if maxj == (end - 1):
-                    print(f"-> s:{start} e:{end}, maxj:{maxj} val:{lineInt[lineIndex[maxj]]} lineIndex:{
-                          lineIndex} jolt:{getWithHighlight(line, indexJoltList)}")
-                    indexJoltList.append(lineIndex[maxj])
-                    end = maxj
-                    continue
-
-                print(f"<- s:{start} e:{end}, maxj:{maxj} val:{lineInt[lineIndex[maxj]]} lineIndex:{
-                      lineIndex} jolt:{getWithHighlight(line, indexJoltList)}")
-                indexJoltList.append(lineIndex[maxj])
-                start = maxj + 1
+            indexJoltList = checkOrderedMax(line, lineInt)
 
             print("jolti:", indexJoltList, "joltLen:", len(indexJoltList))
+            print()
 
-            print(getWithHighlight(line, indexJoltList))
+            print("HighLight View:", getWithhighlightRed(line, indexJoltList, None, 0, len(line)))
             finalJoltString = ""
             for k in range(0, len(line.rstrip('\n'))):
                 if (k in indexJoltList):
                     finalJoltString += line[k]
                     continue
             print("finalJoltString: ", finalJoltString)
+            joltages.append(int(finalJoltString))
 
-        # print("\n\njolts", joltages)
-        # print("sum", sum(joltages))
+        print("\n\njolts", joltages)
+        print("sum", sum(joltages))
 
 
 if __name__ == "__main__":
