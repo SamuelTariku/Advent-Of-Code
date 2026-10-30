@@ -14,10 +14,10 @@ with open("./part1_input.txt", "r", encoding="utf8") as file:
     for i in range(len(ranges)):
         start, end = ranges[i]
         if not newRanges or newRanges[-1][1] < start - 1:
-            print(f"i: {start, end} i:{ranges[i]}")
+            # print(f"i: {start, end} i:{ranges[i]}")
             newRanges.append([start, end])
         else:
-            print(f"*i: {start, end} i:{ranges[i]}")
+            # print(f"*i: {start, end} i:{ranges[i]}")
             newRanges[-1][1] = max(end, newRanges[-1][1])
 
     # print(newRanges)
@@ -27,6 +27,5 @@ with open("./part1_input.txt", "r", encoding="utf8") as file:
         total += r[1]+1 - r[0]
 
     print()
-    # print(f"skips: {len(skips)}")
     print(len(newRanges))
     print(f"Total: {total}")
