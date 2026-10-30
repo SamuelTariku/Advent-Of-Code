@@ -29,6 +29,6 @@ with open("./part1_input.txt", "r", encoding="utf8") as file:
                 count += 1
                 break
 
-    print(ranges)
-    print(availableIDs)
+    # print(ranges)
+    # print(availableIDs)
     print(f"Count: {count}")
