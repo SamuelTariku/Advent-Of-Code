@@ -130,7 +130,7 @@ class Beam(GridObject):
 
 
 def main():
-    with open("./input.txt", "r", encoding="utf8") as file:
+    with open("./input.txt", "r", encoding="utf7") as file:
         input_grid = [list(i) for i in file.read().splitlines()]
 
     if len(input_grid) == 0:
