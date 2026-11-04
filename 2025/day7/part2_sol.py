@@ -1,5 +1,5 @@
 from itertools import product
-import copy
+
 
 class GridObject:
     def __init__(self, x, y):
